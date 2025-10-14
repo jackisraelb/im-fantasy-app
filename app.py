@@ -29,30 +29,36 @@ st.markdown("<h1 style='color:#FFD700;text-align:center;'>⚔️ Inter Maccabi F
 # ---------------- Datos ----------------
 @st.cache_data
 def load_convocados():
+    """Carga la pestaña Convocados desde la hoja IM Fantasy"""
     scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scopes)
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"], scopes=scopes
+    )
     gc = gspread.authorize(creds)
-    sh = gc.open_by_url(SHEET_URL)
-    ws = sh.worksheet("Convocados")   # pestaña Convocados de Google Sheets
+    sh = gc.open_by_url(st.secrets["SHEET_URL_IMFANTASY"])   # Hoja IM Fantasy
+    ws = sh.worksheet("Convocados")                         # pestaña Convocados
     data = ws.get_all_records()
     return pd.DataFrame(data)
 
 try:
     df = load_convocados()
 except Exception as e:
-    st.error(f"❌ No se pudo leer la pestaña 'Convocados' de Google Sheets. Error: {e}")
+    st.error(f"❌ No se pudo leer la pestaña 'Convocados' de la hoja IM Fantasy. Error: {e}")
     st.stop()
 
+# Normalización de columnas y preparación de posiciones
 df.columns = [c.strip() for c in df.columns]
 pos_col = "Posicion"
 
 def formato_opcion(row):
     return f"{row['Nombre']}, {row['Equipo']}. ({row['ValorActual']}€)"
 
+# Filtrado por posiciones
 porteros   = df[df[pos_col] == "Portero"]
 defensas   = df[df[pos_col] == "Defensa"]
 medios     = df[df[pos_col] == "Mediocentro"]
 delanteros = df[df[pos_col] == "Delantero"]
+
 
 
 # ---------------- Helpers ----------------
