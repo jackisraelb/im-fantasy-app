@@ -23,7 +23,10 @@ TEXT_FAMILY = "JerseyM54, Bebas Neue, Arial Black, sans-serif"
 LOGO_PATH = "logo.png"
 EXCEL_PATH = "IM_Fantasy.xlsx"
 
-st.image(LOGO_PATH, use_container_width=True, width=150)
+st.markdown(
+    f"<div style='text-align:center;'><img src='data:image/png;base64,{base64.b64encode(open(LOGO_PATH, 'rb').read()).decode()}' width='80'></div>", 
+    unsafe_allow_html=True
+)
 st.markdown("<h1 style='color:#FFD700;text-align:center;'>⚔️ Inter Maccabi Fantasy ⚔️</h1>", unsafe_allow_html=True)
 
 # ---------------- Datos ----------------
@@ -191,7 +194,6 @@ fig.update_layout(
 )
 
 # Logo y jornada
-fig.add_layout_image(dict(source=LOGO_PATH, xref="paper", yref="paper", x=0.02, y=0.98, sizex=0.15, sizey=0.15, xanchor="left", yanchor="top", layer="above"))
 fig.add_trace(go.Scatter(x=[1.2], y=[7.7], mode="text", text=[f"Jornada {JORNADA_ACTUAL}"], textfont=dict(family=TEXT_FAMILY, size=24, color=GOLD), hoverinfo="skip", showlegend=False))
 # Mostrar predicciones del usuario en el campo (color negro, sin "Partido")
 fig.add_trace(go.Scatter(
