@@ -185,21 +185,21 @@ st.markdown(
 FORMACIONES_COORDS = {
     "1-3-2-1": {
         "Portero": [(3,1.2)],
-        "Defensa": [(1.8,2.5),(3,2.5),(4.2,2.5)],   # más abiertos
+        "Defensa": [(1.5,2.8),(3,2.5),(4.5,2.8)],   # más abiertos
         "Mediocentro": [(2,4.0),(4,4.0)],           # abiertos a los lados
         "Delantero": [(3,6.0)]
     },
     "1-2-3-1": {
         "Portero": [(3,1.2)],
         "Defensa": [(2.2,2.5),(3.8,2.5)],           # un poco más separados
-        "Mediocentro": [(1.8,4.0),(3,4.0),(4.2,4.0)], # tres bien repartidos
+        "Mediocentro": [(1.5,4.3),(3,4.0),(4.5,4.3)], # tres bien repartidos
         "Delantero": [(3,6.0)]
     },
     "1-2-2-2": {
         "Portero": [(3,1.2)],
         "Defensa": [(2.2,2.5),(3.8,2.5)],           # abiertos
         "Mediocentro": [(2,4.0),(4,4.0)],           # dos medios separados
-        "Delantero": [(2.2,6.0),(3.8,6.0)]          # dos delanteros abiertos
+        "Delantero": [(1.9,6.0),(4.1,6.0)]          # dos delanteros abiertos
     }
 }
 
