@@ -23,18 +23,24 @@ TEXT_FAMILY = "JerseyM54, Bebas Neue, Arial Black, sans-serif"
 LOGO_PATH = "logo.png"
 EXCEL_PATH = "IM_Fantasy.xlsx"
 
-st.image(LOGO_PATH, use_column_width=False, width=150)
+st.image(LOGO_PATH, use_container_width=True, width=150)
 st.markdown("<h1 style='color:#FFD700;text-align:center;'>⚔️ Inter Maccabi Fantasy ⚔️</h1>", unsafe_allow_html=True)
 
 # ---------------- Datos ----------------
 @st.cache_data
-def load_convocados(path):
-    return pd.read_excel(path, sheet_name="Convocados")
+def load_convocados():
+    scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scopes)
+    gc = gspread.authorize(creds)
+    sh = gc.open_by_url(SHEET_URL)
+    ws = sh.worksheet("Convocados")   # pestaña Convocados de Google Sheets
+    data = ws.get_all_records()
+    return pd.DataFrame(data)
 
 try:
-    df = load_convocados(EXCEL_PATH)
+    df = load_convocados()
 except Exception as e:
-    st.error(f"❌ No se pudo leer {EXCEL_PATH}. Error: {e}")
+    st.error(f"❌ No se pudo leer la pestaña 'Convocados' de Google Sheets. Error: {e}")
     st.stop()
 
 df.columns = [c.strip() for c in df.columns]
@@ -47,6 +53,7 @@ porteros   = df[df[pos_col] == "Portero"]
 defensas   = df[df[pos_col] == "Defensa"]
 medios     = df[df[pos_col] == "Mediocentro"]
 delanteros = df[df[pos_col] == "Delantero"]
+
 
 # ---------------- Helpers ----------------
 def extrae_valor(txt: str) -> int:
