@@ -274,14 +274,14 @@ if st.button("🚀 Enviar Alineación"):
     # ---- Validación: coherencia ganador/marcador ----
     # Partido Nimi
     if (goles_local1 > goles_rival1 and ganador1 != "I. Maccabi") or \
-    (goles_local1 < goles_rival1 and ganador1 != "RIVAL_NIMI") or \
+    (goles_local1 < goles_rival1 and ganador1 != RIVAL_NIMI) or \
     (goles_local1 == goles_rival1 and ganador1 != "Empate"):
         st.error("❌ El resultado del partido de I. Maccabi no coincide con el ganador elegido.")
         st.stop()
 
     # Partido Armando
     if (goles_local2 > goles_rival2 and ganador2 != "Inter M.") or \
-    (goles_local2 < goles_rival2 and ganador2 != "RIVAL_ARMANDO") or \
+    (goles_local2 < goles_rival2 and ganador2 != RIVAL_ARMANDO) or \
     (goles_local2 == goles_rival2 and ganador2 != "Empate"):
         st.error("❌ El resultado del partido de Inter M. no coincide con el ganador elegido.")
         st.stop()
