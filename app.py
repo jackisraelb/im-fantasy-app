@@ -91,10 +91,10 @@ def limpia_nombre(txt: str) -> str:
 
 def font_size_for(name: str) -> int:
     L = len(name)
-    if L <= 10: return 26
-    if L <= 14: return 24
-    if L <= 18: return 22
-    return 20
+    if L <= 10: return 18
+    if L <= 14: return 16
+    if L <= 18: return 14
+    return 12
 
 def name_and_value(fig, x, y, full_txt):
     if not full_txt: return
@@ -172,6 +172,15 @@ ganador2 = st.selectbox("Ganador", ["Inter M.", RIVAL_ARMANDO, "Empate"], key="g
 goles_local2 = st.selectbox("Goles Inter M.", ["0","1","2","3","4","5","+"], key="goles_local2")
 goles_rival2 = st.selectbox(f"Goles {RIVAL_ARMANDO}", ["0","1","2","3","4","5","+"], key="goles_rival2")
 
+st.markdown(
+    f"<p style='text-align:center; font-size:18px;'><b>I. Maccabi {goles_local1}-{goles_rival1} {RIVAL_NIMI}</b></p>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    f"<p style='text-align:center; font-size:18px;'><b>Inter M. {goles_local2}-{goles_rival2} {RIVAL_ARMANDO}</b></p>",
+    unsafe_allow_html=True
+)
+
 # ---------------- Campo táctico ----------------
 FORMACIONES_COORDS = {
     "1-3-2-1": {"Portero": [(3,1.2)], "Defensa": [(2,2.5),(3,2.5),(4,2.5)], "Mediocentro": [(2.3,4.0),(3.7,4.0)], "Delantero": [(3,6.0)]},
@@ -187,28 +196,14 @@ fig.update_layout(
     plot_bgcolor="#117A43",
     xaxis=dict(visible=False, range=[0,6]),
     yaxis=dict(visible=False, range=[0,8]),
-    height=800,
-    margin=dict(l=20, r=20, t=20, b=120),
+    height=600,
+    margin=dict(l=10, r=10, t=40, b=40),
     showlegend=False,
     modebar=dict(remove=["zoom","pan","select","lasso2d","resetScale2d"], add=["toImage"])
 )
 
 # Logo y jornada
 fig.add_trace(go.Scatter(x=[1.2], y=[7.7], mode="text", text=[f"Jornada {JORNADA_ACTUAL}"], textfont=dict(family=TEXT_FAMILY, size=24, color=GOLD), hoverinfo="skip", showlegend=False))
-# Mostrar predicciones del usuario en el campo (color negro, sin "Partido")
-fig.add_trace(go.Scatter(
-    x=[1.2], y=[7.2], mode="text",
-    text=[f"I. Maccabi {goles_local1}-{goles_rival1} {RIVAL_NIMI}"],
-    textfont=dict(family=TEXT_FAMILY, size=24, color="black"),
-    hoverinfo="skip", showlegend=False
-))
-fig.add_trace(go.Scatter(
-    x=[1.2], y=[6.7], mode="text",
-    text=[f"Inter M. {goles_local2}-{goles_rival2} {RIVAL_ARMANDO}"],
-    textfont=dict(family=TEXT_FAMILY, size=24, color="black"),
-    hoverinfo="skip", showlegend=False
-))
-
 
 # Colocar jugadores
 coords = FORMACIONES_COORDS[formacion]
