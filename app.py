@@ -183,30 +183,6 @@ st.markdown(
 
 # ---------------- Campo táctico ----------------
 FORMACIONES_COORDS = {
-    "1-3-2-1": {"Portero": [(3,1.2)], "Defensa": [(2,2.5),(3,2.5),(4,2.5)], "Mediocentro": [(2.3,4.0),(3.7,4.0)], "Delantero": [(3,6.0)]},
-    "1-2-3-1": {"Portero": [(3,1.2)], "Defensa": [(2.5,2.5),(3.5,2.5)], "Mediocentro": [(2,4.0),(3,4.0),(4,4.0)], "Delantero": [(3,6.0)]},
-    "1-2-2-2": {"Portero": [(3,1.2)], "Defensa": [(2.5,2.5),(3.5,2.5)], "Mediocentro": [(2.3,4.0),(3.7,4.0)], "Delantero": [(2.5,6.0),(3.5,6.0)]}
-}
-
-fig = go.Figure()
-fig.add_shape(type="rect", x0=0, y0=0, x1=6, y1=8, line=dict(color="white", width=3))
-fig.add_shape(type="rect", x0=1, y0=0, x1=5, y1=2, line=dict(color="white", width=2))
-
-fig.update_layout(
-    plot_bgcolor="#117A43",
-    xaxis=dict(visible=False, range=[0,6]),  # prueba con [0,6] o [0,7]
-    yaxis=dict(visible=False, range=[0,8]),
-    height=600,
-    autosize=True,
-    margin=dict(l=10, r=10, t=40, b=40),
-    showlegend=False
-)
-
-# Logo y jornada
-fig.add_trace(go.Scatter(x=[1.2], y=[7.7], mode="text", text=[f"Jornada {JORNADA_ACTUAL}"], textfont=dict(family=TEXT_FAMILY, size=24, color=GOLD), hoverinfo="skip", showlegend=False))
-
-# Colocar jugadores
-coords = FORMACIONES_COORDS = {
     "1-3-2-1": {
         "Portero": [(3,1.2)],
         "Defensa": [(1.8,2.5),(3,2.5),(4.2,2.5)],   # más abiertos
@@ -226,6 +202,31 @@ coords = FORMACIONES_COORDS = {
         "Delantero": [(2.2,6.0),(3.8,6.0)]          # dos delanteros abiertos
     }
 }
+
+
+fig = go.Figure()
+fig.add_shape(type="rect", x0=0, y0=0, x1=6, y1=8, line=dict(color="white", width=3))
+fig.add_shape(type="rect", x0=1, y0=0, x1=5, y1=2, line=dict(color="white", width=2))
+
+fig.update_layout(
+    plot_bgcolor="#117A43",
+    xaxis=dict(visible=False, range=[0,6]),  # prueba con [0,6] o [0,7]
+    yaxis=dict(visible=False, range=[0,8]),
+    height=600,
+    autosize=True,
+    margin=dict(l=10, r=10, t=40, b=40),
+    showlegend=False
+)
+
+# Logo y jornada
+fig.add_trace(go.Scatter(x=[1.2], y=[7.7], mode="text", text=[f"Jornada {JORNADA_ACTUAL}"], textfont=dict(family=TEXT_FAMILY, size=24, color=GOLD), hoverinfo="skip", showlegend=False))
+
+# Colocar jugadores
+coords = FORMACIONES_COORDS[formacion]
+if elegido_portero: name_and_value(fig, coords["Portero"][0][0], coords["Portero"][0][1], elegido_portero)
+for coord, j in zip(coords["Defensa"], elegidos_defensas): name_and_value(fig, coord[0], coord[1], j)
+for coord, j in zip(coords["Mediocentro"], elegidos_medios): name_and_value(fig, coord[0], coord[1], j)
+for coord, j in zip(coords["Delantero"], elegidos_delanteros): name_and_value(fig, coord[0], coord[1], j)
 
 # ---- Carteles dinámicos de presupuesto ----
 jugadores_seleccionados = [elegido_portero] + elegidos_defensas + elegidos_medios + elegidos_delanteros
