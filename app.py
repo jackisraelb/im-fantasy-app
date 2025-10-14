@@ -11,7 +11,7 @@ from google.oauth2.service_account import Credentials
 st.set_page_config(page_title="Inter Maccabi Fantasy", page_icon="⚽", layout="wide")
 
 JORNADA_ACTUAL = st.secrets.get("JORNADA_ACTUAL", "TEST")
-SHEET_URL = st.secrets.get("SHEET_URL")
+SHEET_URL_ENTRADAS = st.secrets.get("SHEET_URL_ENTRADAS")
 SHEET_ENTRADAS = st.secrets.get("SHEET_ENTRADAS", "Entradas")
 PRESUPUESTO_MAX = 700  # límite de presupuesto
 
@@ -306,7 +306,7 @@ if st.button("🚀 Enviar Alineación"):
         scopes = ["https://www.googleapis.com/auth/spreadsheets"]
         creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scopes)
         gc = gspread.authorize(creds)
-        sh = gc.open_by_url(SHEET_URL)
+        sh = gc.open_by_url(SHEET_URL_ENTRADAS)
         ws = sh.worksheet(SHEET_ENTRADAS)
         ws.append_row(row, value_input_option="USER_ENTERED")
 
