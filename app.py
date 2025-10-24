@@ -154,41 +154,45 @@ for i in range({"1-3-2-1":1, "1-2-3-1":1, "1-2-2-2":2}[formacion]):
     dl = st.selectbox(f"Delantero {i+1}", delanteros.apply(formato_opcion, axis=1), key=f"dl{i}")
     elegidos_delanteros.append(dl)
 
+# ---------------- Quiniela / Predicciones ----------------
+RIVAL_NIMI = st.secrets["partidos"].get("Nimi_rival", "Rival Nimi")
+RIVAL_ARMANDO = st.secrets["partidos"].get("Armando_rival", "Rival Armando")
+
+st.markdown("## 🔮 Predicciones de la Jornada (Resultado +5 pts | Ganador/Empate +2 pts)")
+
+st.markdown(f"### Partido I. Maccabi vs {RIVAL_NIMI}")
+ganador1 = st.selectbox("Ganador", ["I. Maccabi", RIVAL_NIMI, "Empate"], key="ganador1")
+goles_local1 = st.selectbox("Goles I. Maccabi", ["0","1","2","3","4","5","+"], key="goles_local1")
+goles_rival1 = st.selectbox(f"Goles {RIVAL_NIMI}", ["0","1","2","3","4","5","+"], key="goles_rival1")
+
+st.markdown(f"### Partido Inter M. vs {RIVAL_ARMANDO}")
+ganador2 = st.selectbox("Ganador", ["Inter M.", RIVAL_ARMANDO, "Empate"], key="ganador2")
+goles_local2 = st.selectbox("Goles Inter M.", ["0","1","2","3","4","5","+"], key="goles_local2")
+goles_rival2 = st.selectbox(f"Goles {RIVAL_ARMANDO}", ["0","1","2","3","4","5","+"], key="goles_rival2")
+
+st.markdown(
+    f"<p style='text-align:center; font-size:18px;'><b>I. Maccabi {goles_local1}-{goles_rival1} {RIVAL_NIMI}</b></p>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    f"<p style='text-align:center; font-size:18px;'><b>Inter M. {goles_local2}-{goles_rival2} {RIVAL_ARMANDO}</b></p>",
+    unsafe_allow_html=True
+)
+
 # ---------------- Campo táctico ----------------
 FORMACIONES_COORDS = {
-    "1-3-2-1": {
-        "Portero": [(3,1.2)],
-        "Defensa": [(1.5,2.8),(3,2.5),(4.5,2.8)],
-        "Mediocentro": [(2,4.0),(4,4.0)],
-        "Delantero": [(3,6.0)]
-    },
-    "1-2-3-1": {
-        "Portero": [(3,1.2)],
-        "Defensa": [(2.2,2.5),(3.8,2.5)],
-        "Mediocentro": [(1.5,4.3),(3,4.0),(4.5,4.3)],
-        "Delantero": [(3,6.0)]
-    },
-    "1-2-2-2": {
-        "Portero": [(3,1.2)],
-        "Defensa": [(2.2,2.5),(3.8,2.5)],
-        "Mediocentro": [(2,4.0),(4,4.0)],
-        "Delantero": [(1.9,6.0),(4.1,6.0)]
-    }
+    "1-3-2-1": {"Portero": [(3,1.2)], "Defensa": [(1.5,2.8),(3,2.5),(4.5,2.8)], "Mediocentro": [(2,4.0),(4,4.0)], "Delantero": [(3,6.0)]},
+    "1-2-3-1": {"Portero": [(3,1.2)], "Defensa": [(2.2,2.5),(3.8,2.5)], "Mediocentro": [(1.5,4.3),(3,4.0),(4.5,4.3)], "Delantero": [(3,6.0)]},
+    "1-2-2-2": {"Portero": [(3,1.2)], "Defensa": [(2.2,2.5),(3.8,2.5)], "Mediocentro": [(2,4.0),(4,4.0)], "Delantero": [(1.9,6.0),(4.1,6.0)]}
 }
 
 fig = go.Figure()
 fig.add_shape(type="rect", x0=0, y0=0, x1=6, y1=8, line=dict(color="white", width=3))
 fig.add_shape(type="rect", x0=1, y0=0, x1=5, y1=2, line=dict(color="white", width=2))
-fig.update_layout(
-    plot_bgcolor="#117A43",
-    xaxis=dict(visible=False, range=[0,6]),
-    yaxis=dict(visible=False, range=[0,8]),
-    height=600,
-    margin=dict(l=10, r=10, t=40, b=40),
-    showlegend=False
-)
+fig.update_layout(plot_bgcolor="#117A43", xaxis=dict(visible=False, range=[0,6]), yaxis=dict(visible=False, range=[0,8]), height=600, margin=dict(l=10, r=10, t=40, b=40), showlegend=False)
 
-# Colocar jugadores
+fig.add_trace(go.Scatter(x=[1.2], y=[7.7], mode="text", text=[f"Jornada {JORNADA_ACTUAL}"], textfont=dict(family=TEXT_FAMILY, size=24, color=GOLD), hoverinfo="skip", showlegend=False))
+
 coords = FORMACIONES_COORDS[formacion]
 if elegido_portero: name_and_value(fig, coords["Portero"][0][0], coords["Portero"][0][1], elegido_portero)
 for coord, j in zip(coords["Defensa"], elegidos_defensas): name_and_value(fig, coord[0], coord[1], j)
@@ -202,22 +206,8 @@ valor_equipo = sum(nombre_a_valor.get(n, 0.0) for n in nombres_limpios)
 presu_restante = PRESUPUESTO_MAX - valor_equipo
 warning = " ⚠️" if presu_restante < 0 else ""
 
-fig.add_annotation(
-    text=f"Valor Equipo: {_fmt_eu(valor_equipo)}€",
-    xref="paper", yref="paper",
-    x=0.25, y=0.02,
-    showarrow=False,
-    font=dict(family=TEXT_FAMILY, size=18, color="white"),
-    bgcolor="black"
-)
-fig.add_annotation(
-    text=f"Presupuesto: {_fmt_eu(presu_restante)}€{warning}",
-    xref="paper", yref="paper",
-    x=0.75, y=0.02,
-    showarrow=False,
-    font=dict(family=TEXT_FAMILY, size=18, color="white"),
-    bgcolor="black"
-)
+fig.add_annotation(text=f"Valor Equipo: {_fmt_eu(valor_equipo)}€", xref="paper", yref="paper", x=0.25, y=0.02, showarrow=False, font=dict(family=TEXT_FAMILY, size=18, color="white"), bgcolor="black")
+fig.add_annotation(text=f"Presupuesto: {_fmt_eu(presu_restante)}€{warning}", xref="paper", yref="paper", x=0.75, y=0.02, showarrow=False, font=dict(family=TEXT_FAMILY, size=18, color="white"), bgcolor="black")
 st.plotly_chart(fig, use_container_width=True)
 
 # ---------------- Envío ----------------
@@ -231,12 +221,31 @@ if st.button("🚀 Enviar Alineación"):
         st.error("❌ No puedes repetir jugadores en la alineación.")
         st.stop()
 
+    # Validar coherencia de predicciones
+    if (goles_local1 > goles_rival1 and ganador1 != "I. Maccabi") or \
+    (goles_local1 < goles_rival1 and ganador1 != RIVAL_NIMI) or \
+    (goles_local1 == goles_rival1 and ganador1 != "Empate"):
+        st.error("❌ El resultado del partido de I. Maccabi no coincide con el ganador elegido.")
+        st.stop()
+
+    if (goles_local2 > goles_rival2 and ganador2 != "Inter M.") or \
+    (goles_local2 < goles_rival2 and ganador2 != RIVAL_ARMANDO) or \
+    (goles_local2 == goles_rival2 and ganador2 != "Empate"):
+        st.error("❌ El resultado del partido de Inter M. no coincide con el ganador elegido.")
+        st.stop()
+
+    # Validar presupuesto
     if valor_equipo > PRESUPUESTO_MAX:
         st.error("❌ Te pasas del presupuesto máximo permitido.")
         st.stop()
 
     alineacion_id = "AID" + str(uuid.uuid4())[:6]
-    row = [alineacion_id, usuario, jornada] + nombres_limpios
+    row = [
+        alineacion_id, usuario, jornada
+    ] + nombres_limpios + [
+        ganador1, f"{goles_local1}-{goles_rival1}",
+        ganador2, f"{goles_local2}-{goles_rival2}"
+    ]
 
     try:
         scopes = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -245,7 +254,7 @@ if st.button("🚀 Enviar Alineación"):
         sh = gc.open_by_url(SHEET_URL_ENTRADAS)
         ws = sh.worksheet(SHEET_ENTRADAS)
         ws.append_row(row, value_input_option="USER_ENTERED")
-        st.success("✅ Alineación recibida con éxito")
+        st.success("✅ Alineación y predicciones enviadas con éxito")
         st.balloons()
     except Exception as e:
         import traceback
