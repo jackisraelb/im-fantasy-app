@@ -49,31 +49,40 @@ except Exception as e:
     st.error(f"❌ No se pudo leer la pestaña 'Convocados' de la hoja IM Fantasy. Error: {e}")
     st.stop()
 
+def to_float_locale(s) -> float:
+    """
+    Convierte strings con formato EU/US a float:
+    - "100,35" -> 100.35
+    - "1.234,56" -> 1234.56
+    - "100.35" -> 100.35
+    """
+    if s is None:
+        return 0.0
+    t = str(s).strip().replace("€","")
+    if "," in t and "." in t:   # estilo EU con miles + decimales
+        t = t.replace(".", "").replace(",", ".")
+    elif "," in t:              # coma como decimal
+        t = t.replace(",", ".")
+    # si solo hay ".", ya es decimal estilo US
+    try:
+        return float(t)
+    except:
+        return 0.0
+
+
 # Normalización de columnas y preparación de posiciones
 df.columns = [c.strip() for c in df.columns]
-df["ValorActual"] = (
-    df["ValorActual"]
-    .astype(str)
-    .str.replace("€", "", regex=False)
-    .str.replace(".", "", regex=False)   # elimina separador de miles
-    .str.replace(",", ".", regex=False)  # convierte coma decimal a punto
-    .astype(float)
-)
+df["ValorActual_num"] = df["ValorActual"].map(to_float_locale)
 pos_col = "Posicion"
 
+def _fmt_eur(val: float) -> str:
+    return f"{val:.2f}".replace(".", ",")  # "100,35"
+
 def formato_opcion(row):
-    nombre = str(row.get("Nombre", "")).strip()
-    equipo = str(row.get("Equipo", "")).strip()
-
-    v = row.get("ValorActual", 0)
-    try:
-        valor = float(v) if pd.notna(v) else 0
-    except Exception:
-        valor = 0
-
-    valor_str = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")  # formato europeo
-    return f"{nombre}, {equipo}. ({valor_str}€)"
-
+    nombre = str(row.get("Nombre","")).strip()
+    equipo = str(row.get("Equipo","")).strip()
+    valor  = float(row.get("ValorActual_num", 0.0))
+    return f"{nombre}, {equipo}. ({_fmt_eur(valor)}€)"
 
 
 # Filtrado por posiciones
@@ -85,13 +94,14 @@ delanteros = df[df[pos_col] == "Delantero"]
 
 
 # ---------------- Helpers ----------------
-def extrae_valor(txt: str) -> int:
+import re
+
+def extrae_valor(txt: str) -> float:
     if not txt:
-        return 0
-    match = re.search(r"\((\d+)€\)", str(txt))
-    if match:
-        return int(match.group(1))
-    return 0
+        return 0.0
+    m = re.search(r"\(([\d\.,]+)\s*€\)", str(txt))
+    return to_float_locale(m.group(1)) if m else 0.0
+
 
 def limpia_nombre(txt: str) -> str:
     if not txt:
