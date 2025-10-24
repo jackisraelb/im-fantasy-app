@@ -60,7 +60,7 @@ def formato_opcion(row):
     equipo = str(row.get("Equipo", "")).strip()
 
     # Asegura número limpio (int) aunque venga como string/float/NaN
-    v = row.get("ValorActual", 0)
+    valor = row.get("ValorActual", 0)
     try:
         valor = int(float(v)) if pd.notna(v) else 0
     except Exception:
