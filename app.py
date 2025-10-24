@@ -56,7 +56,18 @@ errors="coerce")
 pos_col = "Posicion"
 
 def formato_opcion(row):
-    return f"{row['Nombre']}, {row['Equipo']}. ({row['ValorActual']}€)"
+    nombre = str(row.get("Nombre", "")).strip()
+    equipo = str(row.get("Equipo", "")).strip()
+
+    # Asegura número limpio (int) aunque venga como string/float/NaN
+    v = row.get("ValorActual", 0)
+    try:
+        valor = int(float(v)) if pd.notna(v) else 0
+    except Exception:
+        valor = 0
+
+    return f"{nombre}, {equipo}. ({valor}€)"
+
 
 # Filtrado por posiciones
 porteros   = df[df[pos_col] == "Portero"]
