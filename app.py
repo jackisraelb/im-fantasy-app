@@ -49,40 +49,24 @@ except Exception as e:
     st.error(f"❌ No se pudo leer la pestaña 'Convocados' de la hoja IM Fantasy. Error: {e}")
     st.stop()
 
-def to_float_locale(s) -> float:
-    """
-    Convierte strings con formato EU/US a float:
-    - "100,35" -> 100.35
-    - "1.234,56" -> 1234.56
-    - "100.35" -> 100.35
-    """
-    if s is None:
-        return 0.0
-    t = str(s).strip().replace("€","")
-    if "," in t and "." in t:   # estilo EU con miles + decimales
-        t = t.replace(".", "").replace(",", ".")
-    elif "," in t:              # coma como decimal
-        t = t.replace(",", ".")
-    # si solo hay ".", ya es decimal estilo US
-    try:
-        return float(t)
-    except:
-        return 0.0
-
 
 # Normalización de columnas y preparación de posiciones
 df.columns = [c.strip() for c in df.columns]
-df["ValorActual_num"] = df["ValorActual"].map(to_float_locale)
+# justo tras df = load_convocados()
+df["ValorActual"] = pd.to_numeric(
+    df["ValorActual"].astype(str).str.replace(",", ".", regex=False),
+    errors="coerce"
+).fillna(0.0)
 pos_col = "Posicion"
-
-def _fmt_eur(val: float) -> str:
-    return f"{val:.2f}".replace(".", ",")  # "100,35"
 
 def formato_opcion(row):
     nombre = str(row.get("Nombre","")).strip()
     equipo = str(row.get("Equipo","")).strip()
-    valor  = float(row.get("ValorActual_num", 0.0))
-    return f"{nombre}, {equipo}. ({_fmt_eur(valor)}€)"
+    valor = float(row.get("ValorActual", 0.0))  # ya es numérico
+
+    valor_str = f"{valor:.2f}".replace(".", ",")  # "100,35"
+    return f"{nombre}, {equipo}. ({valor_str}€)"
+
 
 
 # Filtrado por posiciones
