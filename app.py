@@ -51,8 +51,14 @@ except Exception as e:
 
 # Normalización de columnas y preparación de posiciones
 df.columns = [c.strip() for c in df.columns]
-df["ValorActual"] = pd.to_numeric(df["ValorActual"],
-errors="coerce")
+df["ValorActual"] = (
+    df["ValorActual"]
+    .astype(str)
+    .str.replace("€", "", regex=False)
+    .str.replace(".", "", regex=False)   # elimina separador de miles
+    .str.replace(",", ".", regex=False)  # convierte coma decimal a punto
+    .astype(float)
+)
 pos_col = "Posicion"
 
 def formato_opcion(row):
