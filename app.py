@@ -51,6 +51,8 @@ except Exception as e:
 
 # Normalización de columnas y preparación de posiciones
 df.columns = [c.strip() for c in df.columns]
+df["ValorActual"] = pd.to_numeric(df["ValorActual"],
+errors="coerce")
 pos_col = "Posicion"
 
 def formato_opcion(row):
