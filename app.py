@@ -65,14 +65,15 @@ def formato_opcion(row):
     nombre = str(row.get("Nombre", "")).strip()
     equipo = str(row.get("Equipo", "")).strip()
 
-    # Asegura número limpio (int) aunque venga como string/float/NaN
-    valor = row.get("ValorActual", 0)
+    v = row.get("ValorActual", 0)
     try:
-        valor = int(float(v)) if pd.notna(v) else 0
+        valor = float(v) if pd.notna(v) else 0
     except Exception:
         valor = 0
 
-    return f"{nombre}, {equipo}. ({valor}€)"
+    valor_str = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")  # formato europeo
+    return f"{nombre}, {equipo}. ({valor_str}€)"
+
 
 
 # Filtrado por posiciones
